@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CAPACITI Candidate Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #fff;
+    }
+
+    .header {
+      background-color: #1e2d57;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo-image {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+      background-color: #fff;
+      border-radius: 50%;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .user-info {
+      text-align: right;
+      display: flex;
+      align-items: center;
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background-color: #fff;
+      border-radius: 50%;
+      margin-left: 15px;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .alert-banner {
+      background-color: #fff8e1;
+      border-left: 4px solid #ffb300;
+      padding: 10px 15px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .alert-icon {
+      color: #ffb300;
+      margin-right: 10px;
+    }
+
+    .card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .card-header h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #333;
+    }
+    
+    .badge {
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .badge-primary {
+      background-color: #e8eaf6;
+      color: #3f51b5;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .status-present {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status-late {
+      background-color: #fff3e0;
+      color: #e65100;
+    }
+
+    .status-absent {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    .attendance-status {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .status-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      background-color: #ffebee;
+      color: #d32f2f;
+      font-size: 20px;
+    }
+    
+    .status-info {
+      flex: 1;
+    }
+    
+    .status-info h4 {
+      margin: 0 0 5px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    
+    .status-info p {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-primary {
+      background-color: #2196f3;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #1976d2;
+    }
+    
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-icon svg {
+      margin-right: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      color: #666;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    td {
+      font-size: 14px;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 15px;
+    }
+    
+    .pagination button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    
+    .pagination-info {
+      margin: 0 10px;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .zoom-controls {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+    
+    .zoom-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .attendance-notification {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #ffebee;
+      color: #c62828;
+      padding: 10px 15px;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <div class="logo-image"></div>
+      <div class="logo-text">CAPACITI</div>
+    </div>
+    <div class="user-info">
+      <div>
+        <div>Welcome, Mmabotse</div>
+        <div id="live-time">Tuesday, May 20, 2025, 9:50:56 AM</div>
+      </div>
+      <div class="user-avatar"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="alert-banner">
+      <span class="alert-icon">⚠️</span>
+      <span>Please remember to sign in by 09:00</span>
+    </div>
+    
+    <div class="card" id="attendance-section">
+      <div class="card-header">
+        <h3>Today's Attendance</h3>
+        <span class="badge badge-primary">AI Academy 2025</span>
+      </div>
+      
+      <div class="attendance-status">
+        <div class="status-icon">✕</div>
+        <div class="status-info">
+          <h4>Not Signed In</h4>
+          <p>You have not signed in for today yet</p>
+        </div>
+        <div>
+          <span class="status-badge" style="background-color: #ffebee; color: #c62828;">Sign-in closes at 9:15 AM</span>
+        </div>
+      </div>
+      
+      <button class="btn btn-primary btn-icon" onclick="signIn()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="currentColor"/>
+        </svg>
+        Tap to sign in
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Attendance History</h3>
+      </div>
+      
+      <table id="attendance-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-05-13</td>
+            <td>-</td>
+            <td><span class="status-badge status-absent">Absent</span></td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>2025-05-12</td>
+            <td>09:20 AM</td>
+            <td><span class="status-badge status-late">Late</span></td>
+            <td>Taxi Strike</td>
+          </tr>
+          <tr>
+            <td>2025-05-09</td>
+            <td>08:20 AM</td>
+            <td><span class="status-badge status-present">Present</span></td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="pagination">
+        <button>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="#666"/>
+          </svg>
+        </button>
+        <div class="pagination-info">1 / 4</div>
+        <button>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" fill="#666"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="zoom-controls">
+        <button class="zoom-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#666"/>
+          </svg>
+        </button>
+        <button class="zoom-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 8h-1V3H6v5H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-4h8v4zm0-11H8V5h8v3zm2 4.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" fill="#666"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="attendance-notification" id="attendance-notification">
+    ⏰ You haven't signed in yet. Please sign in.
+  </div>
+
+  <input type="hidden" id="signedInLate" value="false" />
+  <input type="hidden" id="hasSignedIn" value="false" />
+
+  <script>
+  // Live Clock
+  function updateTime() {
+    const now = new Date();
+    document.getElementById("live-time").innerText =
+      now.toLocaleString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+  }
+  setInterval(updateTime, 1000);
+  updateTime();
+
+  setTimeout(() => {
+    const now = new Date();
+    const hasSignedIn = document.getElementById("hasSignedIn").value === "true";
+    if (!hasSignedIn && (now.getHours() === 9 && now.getMinutes() >= 10)) {
+      const notification = document.getElementById("attendance-notification");
+      notification.style.display = "block";
+      setTimeout(() => {
+        notification.style.display = "none";
+      }, 5000);
+    }
+  }, 10000);
+
+  function signIn() {
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const formattedDate = now.toISOString().split('T')[0];
+
+    const table = document.getElementById("attendance-table").getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow(0);
+
+    const dateCell = newRow.insertCell(0);
+    const timeCell = newRow.insertCell(1);
+    const statusCell = newRow.insertCell(2);
+    const reasonCell = newRow.insertCell(3);
+
+    dateCell.textContent = formattedDate;
+    timeCell.textContent = formattedTime;
+
+    const attendanceSection = document.getElementById("attendance-section");
+    const statusIcon = attendanceSection.querySelector(".status-icon");
+    const statusTitle = attendanceSection.querySelector(".status-info h4");
+    const statusDesc = attendanceSection.querySelector(".status-info p");
+
+    if (hour < 9 || (hour === 9 && minute < 15)) {
+      statusCell.innerHTML = `<span class="status-badge status-present">Present</span>`;
+      reasonCell.textContent = "-";
+      
+      statusIcon.style.backgroundColor = "#e8f5e9";
+      statusIcon.style.color = "#2e7d32";
+      statusIcon.textContent = "✓";
+      statusTitle.textContent = "Present";
+      statusDesc.textContent = "You have successfully signed in for today";
+    } else {
+      statusCell.innerHTML = `<span class="status-badge status-late">Late</span>`;
+      reasonCell.textContent = "No reason submitted";
+      document.getElementById("signedInLate").value = "true";
+      
+      statusIcon.style.backgroundColor = "#fff3e0";
+      statusIcon.style.color = "#e65100";
+      statusIcon.textContent = "⚠";
+      statusTitle.textContent = "Late";
+      statusDesc.textContent = "Please provide a reason for being late";
+      
+      // Here we would show the reason form
+      const reasonForm = document.createElement("div");
+      reasonForm.innerHTML = `
+        <div style="margin-top: 15px; padding: 15px; background-color: #f5f5f5; border-radius: 4px;">
+          <h4 style="margin-top: 0; font-size: 15px;">Reason for being late</h4>
+          <textarea id="late-reason" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;" 
+            rows="3" placeholder="Please explain why you are late today..."></textarea>
+          <button class="btn btn-primary" onclick="submitReason()">Submit Reason</button>
+        </div>
+      `;
+      attendanceSection.appendChild(reasonForm);
+    }
+
+    document.getElementById("hasSignedIn").value = "true";
+    document.querySelector(".btn-icon").style.display = "none";
+  }
+
+  function submitReason() {
+    const signedInLate = document.getElementById("signedInLate").value === "true";
+    if (!signedInLate) {
+      alert("You are not marked as late or you've already submitted a reason.");
+      return;
+    }
+
+    const reason = document.getElementById("late-reason").value.trim();
+    if (reason === "") {
+      alert("Please enter a reason before submitting.");
+      return;
+    }
+
+    const table = document.getElementById("attendance-table").getElementsByTagName('tbody')[0];
+    const rows = table.rows;
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i].cells[2].textContent.includes("Late") && rows[i].cells[3].textContent === "No reason submitted") {
+        rows[i].cells[3].textContent = reason;
+        
+        // Update UI to show reason submitted
+        const attendanceSection = document.getElementById("attendance-section");
+        const reasonForm = attendanceSection.querySelector("div[style*='margin-top: 15px']");
+        if (reasonForm) {
+          reasonForm.innerHTML = `
+            <div style="text-align: center; padding: 10px;">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="#4caf50"/>
+              </svg>
+              <p style="margin: 10px 0 0;">Reason submitted successfully</p>
+            </div>
+          `;
+        }
+        
+        document.getElementById("signedInLate").value = "false";
+        return;
+      }
+    }
+
+    alert("No matching late record found.");
+  }
+</script>
+
+</body>
+</html>
