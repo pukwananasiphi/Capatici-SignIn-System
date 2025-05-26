@@ -11,6 +11,7 @@
     <!-- Header -->
     <header class="header">
       <div class="header-container">
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">☰</button>
         <div class="logo-container">
           <img src="/assets/capacitiza_logo-removebg-preview 1.png" alt="CAPACITI" class="logo">
         </div>
@@ -32,12 +33,15 @@
     </header>
 
     <div class="main-container">
+      <!-- Sidebar Overlay -->
+      <div class="sidebar-overlay" id="sidebar-overlay"></div>
+      
       <!-- Sidebar -->
       <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-        </div>
-        
         <div class="sidebar-content">
+          <div class="sidebar-header">
+            <span id="sidebar-username">Mmabotse</span>
+          </div>
           <ul class="sidebar-menu">
             <li class="sidebar-menu-item active" id="dashboard-menu">
               <a href="#" class="sidebar-link">
@@ -52,7 +56,7 @@
               </a>
             </li>
             <li class="sidebar-menu-item" id="signout-menu">
-              <a href="" class="sidebar-link">
+              <a href="#" class="sidebar-link">
                 <i class="icon">🚪</i>
                 <span>Sign Out</span>
               </a>
@@ -81,7 +85,9 @@
             </div>
             
             <div class="attendance-status">
-              <div class="status-icon not-signed-in" id="status-icon">✕</div>
+              <div class="status-icon-container">
+                <div class="status-icon not-signed-in" id="status-icon">✕</div>
+              </div>
               <div class="status-info">
                 <h4 class="status-title" id="status-title">Not Signed In</h4>
                 <p class="status-desc" id="status-description">You have not signed in for today yet</p>
@@ -111,24 +117,20 @@
               <h3 class="card-title">Attendance History</h3>
             </div>
             
-            <table class="history-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Status</th>
-                  <th>Reason</th>
-                </tr>
-              </thead>
-              <tbody id="history-table-body">
-                <!-- Table rows will be inserted here by JavaScript -->
-              </tbody>
-            </table>
-            
-            <div class="pagination">
-              <button class="pagination-button prev-btn">Previous</button>
-              <button class="pagination-button page-btn active">1</button>
-              <button class="pagination-button next-btn">Next</button>
+            <div class="table-responsive">
+              <table class="history-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Reason</th>
+                  </tr>
+                </thead>
+                <tbody id="history-table-body">
+                  <!-- Table rows will be inserted here by JavaScript -->
+                </tbody>
+              </table>
             </div>
             
             <div class="download-section">
@@ -178,10 +180,6 @@
                 </div>
               </div>
             </div>
-            
-            <div class="profile-info-note">
-              <p>Your profile information is managed by the program administrators. Only your profile picture can be changed.</p>
-            </div>
           </div>
           
           <div class="profile-card">
@@ -207,10 +205,6 @@
               
               <button type="submit" class="button primary-button">Update Password</button>
             </form>
-            
-            <div class="password-note">
-              <p>Password must be at least 8 characters long and contain a mix of letters, numbers, and special characters.</p>
-            </div>
           </div>
         </div>
       </main>
@@ -220,8 +214,10 @@
     <footer class="footer">
       <div class="footer-content">
         © 2025 CAPACITI Digital Attendance System 
-        <a href="/privacy" class="footer-link">Privacy Policy</a>
-        <a href="/help" class="footer-link">Help</a>
+        <div class="footer-links">
+          <a href="/privacy" class="footer-link">Privacy Policy</a>
+          <a href="/help" class="footer-link">Help</a>
+        </div>
       </div>
     </footer>
   </div>

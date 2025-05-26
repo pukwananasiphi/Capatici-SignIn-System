@@ -33,6 +33,9 @@ const elements = {
   dashboardMenu: document.getElementById('dashboard-menu'),
   profileMenu: document.getElementById('profile-menu'),
   signoutMenu: document.getElementById('signout-menu'),
+  menuToggle: document.getElementById('menu-toggle'),
+  sidebarOverlay: document.getElementById('sidebar-overlay'),
+  sidebar: document.getElementById('sidebar'),
   
   // Dashboard elements
   dashboardContent: document.getElementById('dashboard-content'),
@@ -133,6 +136,24 @@ function switchView(view) {
     elements.profileContent.classList.remove('hidden');
     elements.profileMenu.classList.add('active');
     updateProfileDisplay();
+  }
+  
+  // Close sidebar on mobile after navigation
+  if (window.innerWidth <= 768) {
+    toggleSidebar(false);
+  }
+}
+
+// Sidebar toggle
+function toggleSidebar(show) {
+  if (show) {
+    elements.sidebar.classList.add('open');
+    elements.sidebarOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  } else {
+    elements.sidebar.classList.remove('open');
+    elements.sidebarOverlay.classList.remove('open');
+    document.body.style.overflow = '';
   }
 }
 
@@ -361,7 +382,7 @@ function handlePasswordChange(event) {
   elements.passwordForm.reset();
 }
 
-  function handleSignOut() {
+function handleSignOut() {
   // Clear any stored data if needed
   localStorage.removeItem('profileImage');
   
@@ -375,7 +396,6 @@ function handlePasswordChange(event) {
   setTimeout(() => {
     window.location.href = '/Login-page.html';
   }, 1500);
-
   
   // Reset state
   state.hasSignedIn = false;
@@ -395,24 +415,6 @@ function handlePasswordChange(event) {
   setTimeout(() => {
     switchView('dashboard');
   }, 1500);
-}
-
-
-function initializeApp() {
-  // Load saved profile image
-  const savedProfileImage = localStorage.getItem('profileImage');
-  if (savedProfileImage) {
-    state.userProfile.profileImage = savedProfileImage;
-  }
-  
-  // Set up event listeners
-  elements.profileUpload.addEventListener('change', handleProfileImageUpload);
-  elements.signoutMenu.addEventListener('click', (e) => {
-    e.preventDefault();
-    handleSignOut();
-  });
-  
-  // ... rest of your initialization code
 }
 
 // Initialize Application
@@ -447,6 +449,15 @@ function initializeApp() {
     handleSignOut();
   });
   
+  // Mobile menu toggle
+  elements.menuToggle.addEventListener('click', () => {
+    toggleSidebar(true);
+  });
+  
+  elements.sidebarOverlay.addEventListener('click', () => {
+    toggleSidebar(false);
+  });
+  
   // Initialize UI
   updateCurrentTime();
   updateAttendanceStatus();
@@ -463,36 +474,25 @@ function initializeApp() {
       showToast("Attendance Reminder", "⏰ You haven't signed in yet. Please sign in.", "warning");
     }
   }, 10000);
+  
+  // Handle responsive behavior
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      // Reset sidebar on desktop
+      elements.sidebar.classList.remove('open');
+      elements.sidebarOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+  
+  // Accessibility improvements
+  document.addEventListener('keydown', (e) => {
+    // Close sidebar with Escape key
+    if (e.key === 'Escape' && elements.sidebar.classList.contains('open')) {
+      toggleSidebar(false);
+    }
+  });
 }
 
-function handleProfileImageUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  
-  // Validate file type
-  if (!file.type.match('image.*')) {
-    showToast("Invalid file type", "Please upload an image file", "error");
-    return;
-  }
-  
-  // Validate file size (max 5MB)
-  if (file.size > 5 * 1024 * 1024) {
-    showToast("File too large", "Please upload an image smaller than 5MB", "error");
-    return;
-  }
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    state.userProfile.profileImage = e.target.result;
-    
-    // Save to localStorage
-    localStorage.setItem('profileImage', e.target.result);
-    
-    updateProfileDisplay();
-    showToast("Profile picture updated", "Your profile picture has been successfully updated", "success");
-  };
-  reader.readAsDataURL(file);
-}
-
-// Start the application when DOM is loaded
+// Initialize the application when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initializeApp);
