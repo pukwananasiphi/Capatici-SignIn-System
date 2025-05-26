@@ -1,306 +1,936 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CAPACITI Attendance Login</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    /* Custom CSS */
-    body {
-      height: 100vh;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-    }
-    
-    .left-panel {
-      background-color: #1a2c56; /* Navy blue background */
-      color: white;
-      height: 100vh;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .left-panel-content {
-      position: relative;
-      z-index: 10;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem;
-    }
-    
-    .right-panel {
-      background-color: white;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .login-form-container {
-      width: 80%;
-      max-width: 400px;
-    }
-    
-    .login-logo {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-          .login-message {
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAPACITI Digital Attendance</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- HTML5 QR Code Library -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <!-- Embedded CSS -->
+    <style>
+        /* Global Styles */
+        body {
+            height: 100vh;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Desktop styles (default) */
+        .left-panel {
+            background-color: #1a2c56;
+            color: white;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left-panel-content {
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .right-panel {
+            background-color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-form-container {
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-message {
             text-align: center;
             font-size: 13px;
             margin-bottom: 20px;
         }
-        
-        .login-message p {
-            margin-bottom: 0;
-        }
-        
-        .login-message p:first-child {
-            font-weight: 500;
-        }
-        
-        .login-message p:last-child {
-            font-size: 12px;
-            color: #6c757d;
-        }
-        
+
         .form-label {
             font-size: 12px;
             margin-bottom: 5px;
         }
-        
+
         .form-control {
             padding: 8px 12px;
             border-radius: 4px;
             border: 1px solid #ced4da;
+            margin-bottom: 1rem;
         }
-        
-        .login-btn {
+
+        .btn-primary {
             background-color: #1a2c56;
-            color: white;
-            width: 100%;
-            padding: 8px;
             border: none;
             border-radius: 4px;
-            margin-top: 15px;
+            padding: 0.8rem;
+            width: 100%;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
         }
-        
-        .remember-forgot {
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff3d;
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .top-curve-img {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20%;
+            z-index: 1;
+        }
+
+        .bottom-curve-img {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 25%;
+            z-index: 1;
+        }
+
+        .login-form-box {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 2rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .desktop-view {
+                display: none;
+            }
+            
+            .mobile-view {
+                display: block;
+                height: 100vh;
+                background-color: #1a2c56;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .mobile-content {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                padding: 2rem;
+                justify-content: space-between;
+                z-index: 10;
+                position: relative;
+            }
+            
+            .mobile-top {
+                flex-grow: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            .mobile-logo {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+            
+            .mobile-bottom {
+                margin-top: auto;
+            }
+            
+            /* Ensure proper spacing and alignment */
+.mobile-buttons {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 10px 0;
+            padding: 0; /* Remove padding to allow full width */
+            margin-bottom: -2rem;
+            gap: 0; /* Remove gap between buttons */
+            width: 100%; /* Ensure full width */
         }
-        
-        .form-check {
-            margin: 0;
+
+        .btn-login {
+            background-color: transparent;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            text-decoration: none;
+            border: none;
+            padding: 0.8rem 2rem; /* Add padding to match scan button */
         }
-        
-        .form-check-input {
-            margin-top: 0.2em;
+
+        .btn-scan {
+            background-color: #f05454;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 0.8rem 2rem;
+            border-radius: 30px 0 0 0;
+            text-decoration: none;
+            border: none;
+            flex-grow: 0.5;
+            text-align: center; /* Center text within expanded area */
+            right: -2rem; /* Pulls the button to the right */
+            margin-right: -2rem; /* Compensates for the position shift */
         }
-        
-        .form-check-label {
+
+            .top-curve-mobile {
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 30%;
+                max-width: 160px; 
+                z-index: 1;
+            }
+
+            .bottom-curve-mobile {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 40%;
+                max-width: 200px;
+                z-index: 1;
+            }
+        }
+
+        /* Additional styles for mobile login */
+        .mobile-login-form {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 240px;
+            left: 0;
+            background-color: white;
+            z-index: 20;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .mobile-login-content {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .mobile-login-logo {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .mobile-login-header {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .mobile-login-header h6 {
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        .mobile-login-header p {
             font-size: 12px;
-            color: #212529;
-            margin-left: 5px;
+            color: #666;
+            margin-top: 0.25rem;
         }
-        
-        .forgot-password {
-            font-size: 12px;
-            color: #6c757d;
+
+        .mobile-form-group {
+            margin-bottom: 1rem;
+        }
+
+        .mobile-form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .mobile-form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .mobile-form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .mobile-remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .mobile-remember-me input {
+            margin-right: 0.5rem;
+        }
+
+        .mobile-remember-me label {
+            font-size: 14px;
+        }
+
+        .mobile-forgot-password {
+            font-size: 14px;
+            color: #333;
             text-decoration: none;
         }
-        
-        .welcome-text {
-            font-size: 14px;
-            font-weight: 400;
-            margin-top: 5px;
+
+        .mobile-form-submit {
+            margin-top: 0.6rem;
         }
-    .form-control {
-      border-radius: 4px;
-      padding: 0.8rem 1rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ced4da;
-    }
-    
-    .btn-primary {
-      background-color: #1a2c56; /* Navy blue button */
-      border: none;
-      border-radius: 4px;
-      padding: 0.8rem;
-      width: 100%;
-      margin-top: 1rem;
-    }
-    
-    .top-curve-img {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 30%;
-      z-index: 1;
-    }
-    
-    .bottom-curve-img {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 30%;
-      z-index: 1;
-    }
-    
-    .login-form-box {
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-      padding: 2rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-    
-    .form-label {
-      font-size: 0.9rem;
-      margin-bottom: 0.25rem;
-    }
-  </style>
+
+        .mobile-form-submit button {
+            width: 100%;
+            background-color: #1a2c56;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-form-submit button:disabled {
+            background-color: #8ea0c4;
+            cursor: not-allowed;
+        }
+
+        .back-button {
+            z-index: 30;
+            color: #1a2c56;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        /* Only show desktop view on larger screens */
+        @media (min-width: 769px) {
+            .mobile-view {
+                display: none;
+            }
+            
+            .desktop-view {
+                display: block;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .btn-scan {
+                padding: 0.7rem 2rem;
+                font-size: 14px;
+            }
+        }
+
+        /* QR Scan Screen Styles */
+        .scan-screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 240px;
+            left: 0;
+            background-color: white;
+            z-index: 20;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .scan-content-wrapper {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .scan-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .scan-title {
+            color: #1a2c56;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .scan-title span {
+            color: #f05454;
+        }
+
+        .qr-container {
+            background-color: rgb(17, 16, 16);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            width: 80%;
+            max-width: 240px;
+            aspect-ratio: 1/1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .qr-code {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .scan-help {
+            color: #1a2c56;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .scan-button {
+            background-color: #1a2c56;
+            color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            padding: 12px 50px;
+            font-weight: bold;
+            margin-top: 20px;
+            width: 90%;
+            max-width: 300px;
+        }
+
+        .coral-curve {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50%;
+            z-index: 1;
+        }
+
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            max-width: 350px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .toast-success {
+            background-color: #059669;
+        }
+
+        .toast-error {
+            background-color: #dc2626;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-description {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
 </head>
 <body>
-  <div class="container-fluid p-0">
-    <div class="row g-0">
-      <!-- Left Panel -->
-      <div class="col-md-6 left-panel">
-        <img src="./assets/Intersect.png" alt="Top Curve" class="top-curve-img">
-        <img src="./assets/Vector 33.png" alt="Bottom Curve" class="bottom-curve-img">
-        
-        <div class="left-panel-content">
-          <!-- Logo -->
-          <div class="mb-4">
-            <img src="./assets/capacitiza_logo-removebg-preview 1.png" alt="CAPACITI Logo" height="200">
-          </div>
-                <div class="welcome-text">Welcome to CAPACITI Digital Attendance</div>
-        </div>
-      </div>
-      
-      <!-- Right Panel -->
-      <div class="col-md-6 right-panel">
-        <div class="login-form-container">
-          <div class="login-form-box">
-            <!-- Logo (visible only in right panel) -->
-            <div class="login-logo">
-              <img src="./assets/CAPCITI-LOGO-V3-768x414__1_-removebg-preview 1.png" alt="CAPACITI Logo" height="100">
-            </div>
-            
-            <!-- Intro text -->
-            <div class="login-message">
-                        <p>Say goodbye to long queues and manual registers!</p>
-                        <p>Use this platform to sign in quickly and securely each day.</p>
+    <!-- Desktop View -->
+    <div class="desktop-view">
+        <div class="container-fluid p-0">
+            <div class="row g-0">
+                <!-- Left Panel -->
+                <div class="col-md-6 left-panel">
+                    <img src="./assets/Intersect.png"alt="Top Curve" class="top-curve-img">
+                    <img src="./assets/Vector 33.png"alt="Bottom Curve" class="bottom-curve-img">
+
+                    <div class="left-panel-content">
+                        <img src="./assets/capacitiza_logo-removebg-preview 1.png" alt="CAPACITI Logo" height="200">
+                        <div class="welcome-text mt-3">Welcome to CAPACITI Digital Attendance</div>
                     </div>
-            
-            <!-- Login Form -->
-            <form id="loginForm">
-              <div class="mb-3">
-                <label for="email" class="form-label">E-mail:</label>
-                <input type="email" class="form-control" id="email" placeholder="example@email.com" required>
-              </div>
-              
-              <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
-                <input type="password" class="form-control" id="password" placeholder="********" required>
-              </div>
-              
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="rememberMe">
-                  <label class="form-check-label" for="rememberMe">
-                    Remember me
-                  </label>
                 </div>
-                <div class="forgot-password">
-                  <a href="#">Forgot password?</a>
+
+                <!-- Right Panel -->
+                <div class="col-md-6 right-panel">
+                    <div class="login-form-container">
+                        <div class="login-form-box">
+                            <div class="login-logo">
+                                <img src="./assets/CAPCITI-LOGO-V3-768x414__1_-removebg-preview 1.png" alt="CAPACITI Logo" height="100">
+                            </div>
+
+                            <div class="login-message">
+                                <p>Say goodbye to long queues and manual registers!</p>
+                                <p>Use this platform to sign in quickly and securely each day.</p>
+                            </div>
+
+                            <!-- Login Form -->
+                            <form id="desktop-login-form">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">E-mail:</label>
+                                    <input type="email" class="form-control" name="email" id="email" placeholder="example@email.com" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password:</label>
+                                    <input type="password" class="form-control" name="password" id="password" placeholder="********" required>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                                    </div>
+                                    <div class="forgot-password">
+                                        <a href="#">Forgot password?</a>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" id="desktop-login-button">
+                                    <span class="loading-spinner" id="desktop-spinner" style="display: none;"></span>
+                                    <span id="desktop-button-text">Login</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              
-              <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-          </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  
-  <!-- Bootstrap JS Bundle with Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <!-- Firebase App -->
-  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app-compat.js"></script>
-  <!-- Firebase Auth -->
-  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-auth-compat.js"></script>
-  
-  <script>
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-      appId: import.meta.env.VITE_FIREBASE_APP_ID,
-      authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`
-    };
+
+    <!-- Mobile View -->
+    <div class="mobile-view">
+        <img src="./assets/Intersect.png" alt="Top Curve" class="top-curve-mobile">
+        <img src="./assets/Vector 33.png"alt="Bottom Curve" class="bottom-curve-mobile">
+
+        <div class="mobile-content">
+            <!-- Mobile Top Logo -->
+            <div class="mobile-top">
+                <div class="mobile-logo">
+                    <img src="./assets/capacitiza_logo-removebg-preview 1.png" alt="CAPACITI Logo" height="150">
+                </div>
+            </div>
+
+            <!-- Buttons Section -->
+            <div class="mobile-buttons" id="mobile-buttons">
+                <button class="btn-login" id="mobile-login-button">Login</button>
+                <button class="btn-scan" id="mobile-scan-button">Scan</button>
+            </div>
+        </div>
+
+        <!-- Mobile Login Form Section -->
+        <div class="mobile-login-form" id="mobile-login-form">
+            <div class="mobile-login-content">
+                <a href="#" id="back-from-login" class="back-button">← Back</a>
+
+                <div class="mobile-login-logo">
+                    <img src="./assets/CAPCITI-LOGO-V3-768x414__1_-removebg-preview 1.png"alt="CAPACITI Logo" height="90">
+                </div>
+                
+                <div class="mobile-login-header">
+                    <h6>Welcome to CAPACITI Digital Attendance</h6>
+                    <p>Say goodbye to queues! Use this platform to sign in quickly and securely using your phone.</p>
+                </div>
+
+                <form id="mobile-login-form-element">
+                    <div class="mobile-form-group">
+                        <label for="mobileEmail">E-mail:</label>
+                        <input type="email" name="mobileEmail" id="mobileEmail" placeholder="login@gmail.com" required>
+                    </div>
+                    
+                    <div class="mobile-form-group">
+                        <label for="mobilePassword">Password:</label>
+                        <input type="password" name="mobilePassword" id="mobilePassword" placeholder="12345678" required>
+                    </div>
+                    
+                    <div class="mobile-form-options">
+                        <div class="mobile-remember-me">
+                            <input type="checkbox" id="mobileRememberMe">
+                            <label for="mobileRememberMe">Remember me</label>
+                        </div>
+                        <a href="#" class="mobile-forgot-password">Forgot password</a>
+                    </div>
+                    
+                    <div class="mobile-form-submit">
+                        <button type="submit" id="mobile-submit-button">
+                            <span class="loading-spinner" id="mobile-spinner" style="display: none;"></span>
+                            <span id="mobile-button-text">Login</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- QR Scan Screen -->
+        <div class="scan-screen" id="scan-screen">
+            <div class="scan-content-wrapper">
+                <a href="#" id="back-from-scan" class="back-button">← Back</a>
+
+                <div class="scan-content">
+                    <h2 class="scan-title"><span>Scan</span> to sign the register</h2>
+                    
+                    <div class="qr-container" id="qr-reader"></div>
+                    
+                    <p class="scan-help">Having trouble? Ask a facilitator for help.</p>
+                    
+                    <button class="scan-button" id="scan-button">Scan</button>
+                </div>
+                
+                <!-- Coral curve at bottom right -->
+                <svg class="coral-curve" viewBox="0 0 200 100" preserveAspectRatio="none">
+                    <path d="M0,100 L200,0 L200,100 Z" fill="#f05454"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    // Initialize Firebase
-    let firebaseInitialized = false;
+    <!-- Embedded JavaScript -->
+    <script>
+        // Global variables
+        let html5QrCode = null;
+
+        // DOM Elements - Desktop
+        const desktopLoginForm = document.getElementById('desktop-login-form');
+        const desktopLoginButton = document.getElementById('desktop-login-button');
+        const desktopSpinner = document.getElementById('desktop-spinner');
+        const desktopButtonText = document.getElementById('desktop-button-text');
+
+        // DOM Elements - Mobile
+        const mobileButtons = document.getElementById('mobile-buttons');
+        const mobileLoginButton = document.getElementById('mobile-login-button');
+        const mobileScanButton = document.getElementById('mobile-scan-button');
+        const mobileLoginForm = document.getElementById('mobile-login-form');
+        const backFromLoginButton = document.getElementById('back-from-login');
+        const mobileLoginFormElement = document.getElementById('mobile-login-form-element');
+        const mobileSubmitButton = document.getElementById('mobile-submit-button');
+        const mobileSpinner = document.getElementById('mobile-spinner');
+        const mobileButtonText = document.getElementById('mobile-button-text');
+
+        // DOM Elements - Scan
+        const scanScreen = document.getElementById('scan-screen');
+        const backFromScanButton = document.getElementById('back-from-scan');
+        const qrReader = document.getElementById('qr-reader');
+        const scanButton = document.getElementById('scan-button');
+
+        // Toast notification system
+        const createToast = ({ title, description, variant = 'success' }) => {
+            // Create toast container
+            const toastContainer = document.createElement('div');
+            toastContainer.className = `toast-container ${variant === 'destructive' ? 'toast-error' : 'toast-success'}`;
+            
+            // Create toast content
+            toastContainer.innerHTML = `
+                <div class="toast-title">${title}</div>
+                <div class="toast-description">${description}</div>
+            `;
+            
+            // Add to document
+            document.body.appendChild(toastContainer);
+            
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                if (document.body.contains(toastContainer)) {
+                    document.body.removeChild(toastContainer);
+                }
+            }, 3000);
+        };
+
+        // Desktop login form handler
+       desktopLoginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
     
-    try {
-      const firebaseConfigStatus = {
-        apiKey: firebaseConfig.apiKey ? "provided" : "missing",
-        projectId: firebaseConfig.projectId ? "provided" : "missing",
-        appId: firebaseConfig.appId ? "provided" : "missing",
-        authDomain: firebaseConfig.authDomain || window.location.origin,
-        currentOrigin: window.location.origin
-      };
-      
-      console.log("Firebase configuration status:", firebaseConfigStatus);
-      
-      if (firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId) {
-        firebase.initializeApp(firebaseConfig);
-        firebaseInitialized = true;
-        console.log("Firebase initialized successfully");
-        console.log("⚠️ IMPORTANT: Add your domain to Firebase authorized domains:");
-        console.log("⚠️ Firebase Console → Authentication → Settings → Authorized domains →", window.location.hostname);
-      } else {
-        console.error("Firebase initialization failed: Missing required configuration");
-      }
-    } catch (error) {
-      console.error("Firebase initialization error:", error);
+    const email = e.target.elements.email.value;
+    const password = e.target.elements.password.value;
+    
+    if (!email || !password) {
+        createToast({
+            title: "Error",
+            description: "Please enter both email and password",
+            variant: "destructive"
+        });
+        return;
     }
     
-    // Add event listener to the login form
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const rememberMe = document.getElementById('rememberMe').checked;
-      
-      if (firebaseInitialized) {
-        // Sign in with Firebase
-        firebase.auth().setPersistence(rememberMe ? 
-          firebase.auth.Auth.Persistence.LOCAL : 
-          firebase.auth.Auth.Persistence.SESSION
-        ).then(() => {
-          return firebase.auth().signInWithEmailAndPassword(email, password);
-        }).then((userCredential) => {
-          // Redirect to dashboard after successful login
-          window.location.href = '/dashboard';
-        }).catch((error) => {
-          console.error("Login failed:", error);
-          alert("Login failed: " + error.message);
-        }); c
-      } else {
-        alert("Firebase not initialized. Please check the console for details.");
-      }
-    });
-  </script>
+    // Show loading state
+    desktopLoginButton.disabled = true;
+    desktopSpinner.style.display = 'inline-block';
+    desktopButtonText.textContent = 'Logging in...';
+    
+    // Simulate API call delay
+    setTimeout(() => {
+        // Reset loading state
+        desktopLoginButton.disabled = false;
+        desktopSpinner.style.display = 'none';
+        desktopButtonText.textContent = 'Login';
+        
+        // Check if admin credentials
+        if (email === 'admin@gmail.com' && password === 'password') {
+            createToast({
+                title: "Admin Login Success",
+                description: "Welcome Admin! Redirecting to dashboard..."
+            });
+            // Redirect to admin dashboard
+            setTimeout(() => {
+                window.location.href = "AdminDashboard.html";
+            }, 1500);
+        } else {
+            createToast({
+                title: "Login Success",
+                description: "Welcome! Redirecting to face capture..."
+            });
+            // Redirect to facial capture
+            setTimeout(() => {
+                window.location.href = "facial-capture.html";
+            }, 1500);
+        }
+    }, 1000);
+});
+
+        // Mobile login button handler
+        mobileLoginButton.addEventListener('click', () => {
+            mobileLoginForm.style.display = 'block';
+            mobileButtons.style.display = 'none';
+        });
+
+        // Mobile scan button handler
+        mobileScanButton.addEventListener('click', () => {
+            scanScreen.style.display = 'block';
+            mobileButtons.style.display = 'none';
+            
+            // Small delay to ensure DOM is ready
+            setTimeout(() => {
+                startQrScanner();
+            }, 100);
+        });
+
+        // Back button from login handler
+        backFromLoginButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            mobileLoginForm.style.display = 'none';
+            mobileButtons.style.display = 'flex';
+        });
+
+        // Back button from scan handler
+        backFromScanButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    html5QrCode = null;
+                    scanScreen.style.display = 'none';
+                    mobileButtons.style.display = 'flex';
+                }).catch(() => {
+                    scanScreen.style.display = 'none';
+                    mobileButtons.style.display = 'flex';
+                });
+            } else {
+                scanScreen.style.display = 'none';
+                mobileButtons.style.display = 'flex';
+            }
+        });
+
+        // Mobile login form handler
+        mobileLoginFormElement.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const email = e.target.elements.mobileEmail.value;
+    const password = e.target.elements.mobilePassword.value;
+    
+    if (!email || !password) {
+        createToast({
+            title: "Error",
+            description: "Please enter both email and password",
+            variant: "destructive"
+        });
+        return;
+    }
+    
+    // Show loading state
+    mobileSubmitButton.disabled = true;
+    mobileSpinner.style.display = 'inline-block';
+    mobileButtonText.textContent = 'Logging in...';
+    
+    // Simulate API call delay
+    setTimeout(() => {
+        // Reset loading state
+        mobileSubmitButton.disabled = false;
+        mobileSpinner.style.display = 'none';
+        mobileButtonText.textContent = 'Login';
+        
+        // Check if admin credentials
+        if (email === 'admin@gmail.com' && password === 'password') {
+            createToast({
+                title: "Admin Login Success",
+                description: "Welcome Admin! Redirecting to dashboard..."
+            });
+            // Redirect to admin dashboard
+            setTimeout(() => {
+                window.location.href = "AdminDashboard.html";
+            }, 1500);
+        } else {
+            createToast({
+                title: "Login Success",
+                description: "Welcome! Redirecting to face capture..."
+            });
+            // Redirect to facial capture
+            setTimeout(() => {
+                window.location.href = "facial-capture.html";
+            }, 1500);
+        }
+    }, 1000);
+});
+
+        // QR Scanner functionality
+        function startQrScanner() {
+            if (!Html5Qrcode || !qrReader) return;
+            
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices && devices.length) {
+                    const cameraId = devices[0].id;
+                    html5QrCode = new Html5Qrcode("qr-reader");
+                    html5QrCode.start(
+                        cameraId,
+                        {
+                            fps: 10,
+                            qrbox: 200
+                        },
+                        qrCodeMessage => {
+                            createToast({
+                                title: "QR Code Detected",
+                                description: `Code: ${qrCodeMessage}`
+                            });
+                            
+                            if (html5QrCode) {
+                                html5QrCode.stop().then(() => {
+                                    html5QrCode = null;
+                                    scanScreen.style.display = 'none';
+                                    mobileButtons.style.display = 'flex';
+                                });
+                            }
+                        },
+                        errorMessage => {
+                            // You can log scanning errors here if needed
+                            console.error("QR scanning error:", errorMessage);
+                        }
+                    ).catch(err => {
+                        console.error("QR code scanner error:", err);
+                    });
+                }
+            }).catch(err => {
+                console.error("Camera initialization failed: ", err);
+                createToast({
+                    title: "Camera Error",
+                    description: "Failed to initialize camera",
+                    variant: "destructive"
+                });
+            });
+        }
+
+        // Scan button click handler
+        scanButton.addEventListener('click', () => {
+            // This could be used to restart scanning if needed
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    startQrScanner();
+                });
+            } else {
+                startQrScanner();
+            }
+        });
+
+        // Mobile login form handler (for the form itself)
+       function handleMobileLogin(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('mobileEmail').value;
+    const password = document.getElementById('mobilePassword').value;
+    
+    if (!email || !password) {
+        createToast({
+            title: "Error",
+            description: "Please enter both email and password",
+            variant: "destructive"
+        });
+        return;
+    }
+    
+    // Show loading state
+    mobileSubmitButton.disabled = true;
+    mobileSpinner.style.display = 'inline-block';
+    mobileButtonText.textContent = 'Logging in...';
+    
+    // Simulate API call delay
+    setTimeout(() => {
+        // Reset loading state
+        mobileSubmitButton.disabled = false;
+        mobileSpinner.style.display = 'none';
+        mobileButtonText.textContent = 'Login';
+        
+        // Check if admin credentials
+        if (email === 'admin@gmail.com' && password === 'password') {
+            createToast({
+                title: "Admin Login Success",
+                description: "Welcome Admin! Redirecting to dashboard..."
+            });
+            // Redirect to admin dashboard
+            setTimeout(() => {
+                window.location.href = "AdminDashboard.html";
+            }, 1500);
+        } else {
+            createToast({
+                title: "Login Success",
+                description: "Welcome! Redirecting to face capture..."
+            });
+            // Redirect to facial capture
+            setTimeout(() => {
+                window.location.href = "facial-capture.html";
+            }, 1500);
+        }
+    }, 1000);
+}
+    </script>
 </body>
 </html>
