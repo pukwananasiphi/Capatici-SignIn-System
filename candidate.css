@@ -19,6 +19,26 @@ body {
   flex-direction: column;
 }
 
+  /* Background images */
+        .bg-top-curve {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 20%;
+            max-width: 200px;
+            z-index: 0;
+        }
+        
+        .bg-bottom-curve {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 25%;
+            max-width: 200px;
+            z-index: 0;
+        }
+
+
 /* Header Styles */
 .header {
   background-color: #1e2d57;
