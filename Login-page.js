@@ -1,302 +1,100 @@
-        // Global variables
-        let html5QrCode = null;
+// ✅ 1. Supabase Client Setup (First!)
+const SUPABASE_URL = 'https://kpngseysyicyhsezucsz.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwbmdzZXlzeWljeWhzZXp1Y3N6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg0MzAwNzYsImV4cCI6MjA2NDAwNjA3Nn0.WxIXf3I67IYtihZOoXSo_flmxCC5HKnLImIFayfjHf0';
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // DOM Elements - Desktop
-        const desktopLoginForm = document.getElementById('desktop-login-form');
-        const desktopLoginButton = document.getElementById('desktop-login-button');
-        const desktopSpinner = document.getElementById('desktop-spinner');
-        const desktopButtonText = document.getElementById('desktop-button-text');
-
-        // DOM Elements - Mobile
-        const mobileButtons = document.getElementById('mobile-buttons');
-        const mobileLoginButton = document.getElementById('mobile-login-button');
-        const mobileScanButton = document.getElementById('mobile-scan-button');
-        const mobileLoginForm = document.getElementById('mobile-login-form');
-        const backFromLoginButton = document.getElementById('back-from-login');
-        const mobileLoginFormElement = document.getElementById('mobile-login-form-element');
-        const mobileSubmitButton = document.getElementById('mobile-submit-button');
-        const mobileSpinner = document.getElementById('mobile-spinner');
-        const mobileButtonText = document.getElementById('mobile-button-text');
-
-        // DOM Elements - Scan
-        const scanScreen = document.getElementById('scan-screen');
-        const backFromScanButton = document.getElementById('back-from-scan');
-        const qrReader = document.getElementById('qr-reader');
-        const scanButton = document.getElementById('scan-button');
-
-        // Toast notification system
-        const createToast = ({ title, description, variant = 'success' }) => {
-            // Create toast container
-            const toastContainer = document.createElement('div');
-            toastContainer.className = `toast-container ${variant === 'destructive' ? 'toast-error' : 'toast-success'}`;
-            
-            // Create toast content
-            toastContainer.innerHTML = `
-                <div class="toast-title">${title}</div>
-                <div class="toast-description">${description}</div>
-            `;
-            
-            // Add to document
-            document.body.appendChild(toastContainer);
-            
-            // Remove toast after 3 seconds
-            setTimeout(() => {
-                if (document.body.contains(toastContainer)) {
-                    document.body.removeChild(toastContainer);
-                }
-            }, 3000);
-        };
-
-        // Desktop login form handler
-       desktopLoginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const email = e.target.elements.email.value;
-    const password = e.target.elements.password.value;
-    
-    if (!email || !password) {
-        createToast({
-            title: "Error",
-            description: "Please enter both email and password",
-            variant: "destructive"
-        });
-        return;
-    }
-    
-    // Show loading state
-    desktopLoginButton.disabled = true;
-    desktopSpinner.style.display = 'inline-block';
-    desktopButtonText.textContent = 'Logging in...';
-    
-    // Simulate API call delay
-    setTimeout(() => {
-        // Reset loading state
-        desktopLoginButton.disabled = false;
-        desktopSpinner.style.display = 'none';
-        desktopButtonText.textContent = 'Login';
-        
-        // Check if admin credentials
-        if (email === 'admin@capaciti.org.za' && password === 'Password') {
-            createToast({
-                title: "Admin Login Success",
-                description: "Welcome Admin! Redirecting to dashboard..."
-            });
-            // Redirect to admin dashboard
-            setTimeout(() => {
-                window.location.href = "AdminDashboard.html";
-            }, 1500);
-        } else {
-            createToast({
-                title: "Login Success",
-                description: "Welcome! Redirecting to face capture..."
-            });
-            // Redirect to facial capture
-            setTimeout(() => {
-                window.location.href = "facial-capture.html";
-            }, 1500);
-        }
-    }, 1000);
-});
-
-        // Mobile login button handler
-        mobileLoginButton.addEventListener('click', () => {
-            mobileLoginForm.style.display = 'block';
-            mobileButtons.style.display = 'none';
-        });
-
-        // Mobile scan button handler
-        mobileScanButton.addEventListener('click', () => {
-            scanScreen.style.display = 'block';
-            mobileButtons.style.display = 'none';
-            
-            // Small delay to ensure DOM is ready
-            setTimeout(() => {
-                startQrScanner();
-            }, 100);
-        });
-
-        // Back button from login handler
-        backFromLoginButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            mobileLoginForm.style.display = 'none';
-            mobileButtons.style.display = 'flex';
-        });
-
-        // Back button from scan handler
-        backFromScanButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            if (html5QrCode) {
-                html5QrCode.stop().then(() => {
-                    html5QrCode = null;
-                    scanScreen.style.display = 'none';
-                    mobileButtons.style.display = 'flex';
-                }).catch(() => {
-                    scanScreen.style.display = 'none';
-                    mobileButtons.style.display = 'flex';
-                });
-            } else {
-                scanScreen.style.display = 'none';
-                mobileButtons.style.display = 'flex';
-            }
-        });
-
-        // Mobile login form handler
-        mobileLoginFormElement.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const email = e.target.elements.mobileEmail.value;
-    const password = e.target.elements.mobilePassword.value;
-    
-    if (!email || !password) {
-        createToast({
-            title: "Error",
-            description: "Please enter both email and password",
-            variant: "destructive"
-        });
-        return;
-    }
-    
-    // Show loading state
-    mobileSubmitButton.disabled = true;
-    mobileSpinner.style.display = 'inline-block';
-    mobileButtonText.textContent = 'Logging in...';
-    
-    // Simulate API call delay
-    setTimeout(() => {
-        // Reset loading state
-        mobileSubmitButton.disabled = false;
-        mobileSpinner.style.display = 'none';
-        mobileButtonText.textContent = 'Login';
-        
-        // Check if admin credentials
-        if (email === 'admin@capaciti.org.za' && password === 'Password') {
-            createToast({
-                title: "Admin Login Success",
-                description: "Welcome Admin! Redirecting to dashboard..."
-            });
-            // Redirect to admin dashboard
-            setTimeout(() => {
-                window.location.href = "AdminDashboard.html";
-            }, 1500);
-        } else {
-            createToast({
-                title: "Login Success",
-                description: "Welcome! Redirecting to face capture..."
-            });
-            // Redirect to facial capture
-            setTimeout(() => {
-                window.location.href = "facial-capture.html";
-            }, 1500);
-        }
-    }, 1000);
-});
-
-        // QR Scanner functionality
-        function startQrScanner() {
-            if (!Html5Qrcode || !qrReader) return;
-            
-            Html5Qrcode.getCameras().then(devices => {
-                if (devices && devices.length) {
-                    const cameraId = devices[0].id;
-                    html5QrCode = new Html5Qrcode("qr-reader");
-                    html5QrCode.start(
-                        cameraId,
-                        {
-                            fps: 10,
-                            qrbox: 200
-                        },
-                        qrCodeMessage => {
-                            createToast({
-                                title: "QR Code Detected",
-                                description: `Code: ${qrCodeMessage}`
-                            });
-                            
-                            if (html5QrCode) {
-                                html5QrCode.stop().then(() => {
-                                    html5QrCode = null;
-                                    scanScreen.style.display = 'none';
-                                    mobileButtons.style.display = 'flex';
-                                });
-                            }
-                        },
-                        errorMessage => {
-                            // You can log scanning errors here if needed
-                            console.error("QR scanning error:", errorMessage);
-                        }
-                    ).catch(err => {
-                        console.error("QR code scanner error:", err);
-                    });
-                }
-            }).catch(err => {
-                console.error("Camera initialization failed: ", err);
-                createToast({
-                    title: "Camera Error",
-                    description: "Failed to initialize camera",
-                    variant: "destructive"
-                });
-            });
-        }
-
-        // Scan button click handler
-        scanButton.addEventListener('click', () => {
-            // This could be used to restart scanning if needed
-            if (html5QrCode) {
-                html5QrCode.stop().then(() => {
-                    startQrScanner();
-                });
-            } else {
-                startQrScanner();
-            }
-        });
-
-        // Mobile login form handler (for the form itself)
-       function handleMobileLogin(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('mobileEmail').value;
-    const password = document.getElementById('mobilePassword').value;
-    
-    if (!email || !password) {
-        createToast({
-            title: "Error",
-            description: "Please enter both email and password",
-            variant: "destructive"
-        });
-        return;
-    }
-    
-    // Show loading state
-    mobileSubmitButton.disabled = true;
-    mobileSpinner.style.display = 'inline-block';
-    mobileButtonText.textContent = 'Logging in...';
-    
-    // Simulate API call delay
-    setTimeout(() => {
-        // Reset loading state
-        mobileSubmitButton.disabled = false;
-        mobileSpinner.style.display = 'none';
-        mobileButtonText.textContent = 'Login';
-        
-        // Check if admin credentials
-        if (email === 'admin@gmail.com' && password === 'password') {
-            createToast({
-                title: "Admin Login Success",
-                description: "Welcome Admin! Redirecting to dashboard..."
-            });
-            // Redirect to admin dashboard
-            setTimeout(() => {
-                window.location.href = "AdminDashboard.html";
-            }, 1500);
-        } else {
-            createToast({
-                title: "Login Success",
-                description: "Welcome! Redirecting to face capture..."
-            });
-            // Redirect to facial capture
-            setTimeout(() => {
-                window.location.href = "facial-capture.html";
-            }, 1500);
-        }
-    }, 1000);
+// ✅ 2. Toast Notification
+function createToast({ title, description, variant = 'success' }) {
+    const toast = document.createElement('div');
+    toast.className = `toast-container ${variant === 'destructive' ? 'toast-error' : 'toast-success'}`;
+    toast.innerHTML = `
+        <div class="toast-title">${title}</div>
+        <div class="toast-description">${description}</div>
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
 }
+
+// ✅ 3. Login Handler
+async function handleLogin(email, password, button, spinner, buttonText) {
+    if (!email || !password) {
+        createToast({
+            title: "Error",
+            description: "Please enter both email and password",
+            variant: "destructive"
+        });
+        return;
+    }
+
+    button.disabled = true;
+    spinner.style.display = 'inline-block';
+    buttonText.textContent = 'Logging in...';
+
+    try {
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+
+      const { data: profile, error: profileError } = await client
+        .from('users')
+        .select('role')
+        .eq('email', email)
+        .single();
+
+
+        if (!profile || !profile.role) {
+            throw new Error('User role not found');
+        }
+
+        const role = profile.role.toLowerCase();
+        console.log('Logged in as:', role);
+
+        createToast({
+            title: "Login Successful",
+            description: `Redirecting as ${role}`
+        });
+
+        setTimeout(() => {
+            if (role === 'admin') {
+                window.location.href = 'AdminDashboard.html';
+            } else {
+                window.location.href = 'facial-capture.html';
+            }
+        }, 1500);
+
+    } catch (err) {
+        console.error('Login error:', err.message);
+        createToast({
+            title: "Login Failed",
+            description: err.message,
+            variant: "destructive"
+        });
+    } finally {
+        button.disabled = false;
+        spinner.style.display = 'none';
+        buttonText.textContent = 'Login';
+    }
+}
+
+// ✅ 4. Desktop Login Form
+document.getElementById('desktop-login-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    handleLogin(
+        document.getElementById('email').value,
+        document.getElementById('password').value,
+        document.getElementById('desktop-login-button'),
+        document.getElementById('desktop-spinner'),
+        document.getElementById('desktop-button-text')
+    );
+});
+
+// ✅ 5. Mobile Login Form
+document.getElementById('mobile-login-form-element')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    handleLogin(
+        document.getElementById('mobileEmail').value,
+        document.getElementById('mobilePassword').value,
+        document.getElementById('mobile-submit-button'),
+        document.getElementById('mobile-spinner'),
+        document.getElementById('mobile-button-text')
+    );
+});
