@@ -94,10 +94,16 @@ async function handleLogin(email, password, button, spinner, buttonText) {
         const { data: profile, error: profileError } = await client
             .from('users')
             .select('role')
-            .eq('user_id', user.id)
+            .eq('id', user.id)
             .single();
 
         console.log('Profile lookup:', { profile, profileError }); // Debug log
+
+        if (!profileError) {
+  // Save the profile in sessionStorage for later use
+        sessionStorage.setItem('userProfile', JSON.stringify(profile));
+        }
+
 
         if (profileError) {
             console.error('Profile error:', profileError);
